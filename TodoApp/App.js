@@ -6,7 +6,6 @@
  * @flow strict-local
  */
 
-import type {Node} from 'react';
 import React from 'react';
 import {
   SafeAreaView,
@@ -14,82 +13,119 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
+  TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+import colors from './themes/colors';
+import fonts from './themes/fonts';
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [todos, setTodos] = React.useState([]);
+  const [todoText, setTodoText] = React.useState('');
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const handleAddTodo = () => {
+    let todoList = todos;
+    todoList.push(todoText);
+    setTodos(todoList);
+    setTodoText('');
   };
-
+  const handleTodo = todo => {
+    setTodoText(todo);
+  };
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        {/* <Header /> */}
-        <View>
-          <Text
-            style={{
-              fontSize: 30,
-              color: 'black',
-              fontFamily: 'Montserrat-Bold',
-            }}>
-            Hello Sai
-          </Text>
+    <SafeAreaView style={styles.backgroundStyle}>
+      <StatusBar />
+      <View style={styles.backgroundStyle}>
+        <View style={styles.titleWrapper}>
+          <Text style={styles.titletext}>Todo's</Text>
         </View>
-      </ScrollView>
+        <ScrollView>
+          {todos && todos.length > 0 ? (
+            todos.map((data, i) => {
+              return (
+                <TouchableOpacity key={i} style={styles.bodyWrapper}>
+                  <View style={styles.bodyBox}>
+                    <View style={styles.todoCheckBox}></View>
+                    <Text style={styles.todoText}>{data}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <Text>No Data</Text>
+          )}
+        </ScrollView>
+        <View style={styles.footerWrapper}>
+          <TextInput
+            onChangeText={todo => handleTodo(todo)}
+            style={styles.todoTextInput}
+            placeholder="Write a task"
+            value={todoText}
+          />
+          <TouchableOpacity
+            onPress={handleAddTodo}
+            style={styles.addTodo}></TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  backgroundStyle: {
+    backgroundColor: colors.backgroundColor,
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  titleWrapper: {
+    marginHorizontal: 20,
+    marginTop: 94,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  titletext: {
+    fontSize: fonts.fontSize.h4,
+    color: colors.textColor,
+    fontFamily: fonts.fontFamily.bold,
+    fontWeight: fonts.fontWeight.sevenHundreds,
   },
-  highlight: {
-    fontWeight: '700',
+  bodyWrapper: {
+    marginHorizontal: 20,
+    backgroundColor: colors.white,
+    width: '90%',
+    height: 53,
+    marginTop: 20,
+  },
+  todoCheckBox: {
+    height: 24,
+    width: 24,
+    backgroundColor: colors.blue,
+    marginLeft: 15,
+    marginTop: 14,
+  },
+  bodyBox: {
+    flexDirection: 'row',
+  },
+  todoText: {
+    marginLeft: 15,
+    marginTop: 16,
+    color: 'black',
+  },
+  footerWrapper: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    justifyContent: 'space-between',
+  },
+  todoTextInput: {
+    backgroundColor: 'white',
+    height: 55,
+    width: '80%',
+    borderRadius: 30,
+    textAlign: 'center',
+  },
+  addTodo: {
+    height: 50,
+    width: 50,
+    backgroundColor: 'white',
+    borderRadius: 50,
   },
 });
 
